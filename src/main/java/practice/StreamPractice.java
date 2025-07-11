@@ -55,7 +55,7 @@ public class StreamPractice {
         return peopleList.stream()
                 .filter(person -> person.getSex() == Person.Sex.MAN)
                 .filter(person -> person.getAge() >= fromAge && person.getAge() <= toAge)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**
@@ -80,7 +80,7 @@ public class StreamPractice {
 
                     return age >= fromAge && age <= maxAgeForSex;
                 })
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**
@@ -106,6 +106,6 @@ public class StreamPractice {
                 .filter(validator)
                 .map(Candidate::getName)
                 .sorted()
-                .collect(Collectors.toList());
+                .toList();
     }
 }

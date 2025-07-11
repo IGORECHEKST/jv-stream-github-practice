@@ -5,7 +5,6 @@ import model.Candidate;
 
 public class CandidateValidator implements Predicate<Candidate> {
 
-    // Константы для литералов и чисел
     private static final int MIN_AGE = 35;
     private static final String NATIONALITY_UKRAINIAN = "Ukrainian";
     private static final int REQUIRED_LIVING_YEARS = 10;
