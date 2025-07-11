@@ -1,7 +1,6 @@
 package practice;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.function.Predicate;
@@ -36,15 +35,8 @@ public class StreamPractice {
      * But before that subtract 1 from each element on an odd position (having the odd index).
      */
     public Double getOddNumsAverage(List<Integer> numbers) {
-
         return IntStream.range(0, numbers.size())
-                .mapToObj(i -> {
-                    if (i % 2 != 0) {
-                        return numbers.get(i) - 1;
-                    } else {
-                        return numbers.get(i);
-                    }
-                })
+                .mapToObj(i -> (i % 2 != 0) ? numbers.get(i) - 1 : numbers.get(i))
                 .filter(num -> num % 2 != 0)
                 .mapToDouble(Integer::doubleValue)
                 .average()
@@ -60,10 +52,6 @@ public class StreamPractice {
      * Example: select men who can be recruited to army (from 18 to 27 years old inclusively).
      */
     public List<Person> selectMenByAge(List<Person> peopleList, int fromAge, int toAge) {
-        if (peopleList == null || peopleList.isEmpty()) {
-            return Collections.emptyList();
-        }
-
         return peopleList.stream()
                 .filter(person -> person.getSex() == Person.Sex.MAN)
                 .filter(person -> person.getAge() >= fromAge && person.getAge() <= toAge)
@@ -82,21 +70,15 @@ public class StreamPractice {
      */
     public List<Person> getWorkablePeople(int fromAge, int femaleToAge,
                                           int maleToAge, List<Person> peopleList) {
-        if (peopleList == null) {
-            return Collections.emptyList();
-        }
 
         return peopleList.stream()
                 .filter(person -> {
                     int age = person.getAge();
                     Person.Sex sex = person.getSex();
 
-                    if (sex == Person.Sex.MAN) {
-                        return age >= fromAge && age <= maleToAge;
-                    } else if (sex == Person.Sex.WOMAN) {
-                        return age >= fromAge && age <= femaleToAge;
-                    }
-                    return false;
+                    int maxAgeForSex = (sex == Person.Sex.MAN) ? maleToAge : femaleToAge;
+
+                    return age >= fromAge && age <= maxAgeForSex;
                 })
                 .collect(Collectors.toList());
     }
@@ -107,9 +89,6 @@ public class StreamPractice {
      * return the names of all cats whose owners are women from `femaleAge` years old inclusively.
      */
     public List<String> getCatsNames(List<Person> peopleList, int femaleAge) {
-        if (peopleList == null) {
-            return Collections.emptyList();
-        }
 
         return peopleList.stream()
                 .filter(person -> person.getSex() == Person.Sex.WOMAN
@@ -120,16 +99,13 @@ public class StreamPractice {
     }
 
     public List<String> validateCandidates(List<Candidate> candidates) {
-        if (candidates == null || candidates.isEmpty()) {
-            return Collections.emptyList();
-        }
 
         Predicate<Candidate> validator = new CandidateValidator();
 
         return candidates.stream()
-                .filter(validator) // Применяем наш предикат для фильтрации
-                .map(Candidate::getName) // Получаем имена прошедших кандидатов
-                .sorted() // Сортируем имена в алфавитном порядке
-                .collect(Collectors.toList()); // Собираем в список
+                .filter(validator)
+                .map(Candidate::getName)
+                .sorted()
+                .collect(Collectors.toList());
     }
 }

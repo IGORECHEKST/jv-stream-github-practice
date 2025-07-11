@@ -5,9 +5,16 @@ import model.Candidate;
 
 public class CandidateValidator implements Predicate<Candidate> {
 
+    // Константы для литералов и чисел
+    private static final int MIN_AGE = 35;
+    private static final String NATIONALITY_UKRAINIAN = "Ukrainian";
+    private static final int REQUIRED_LIVING_YEARS = 10;
+    private static final String PERIOD_DELIMITER = "-";
+    private static final int EXPECTED_PERIOD_PARTS = 2;
+
     @Override
     public boolean test(Candidate candidate) {
-        if (candidate.getAge() < 35) {
+        if (candidate.getAge() < MIN_AGE) {
             return false;
         }
 
@@ -15,25 +22,29 @@ public class CandidateValidator implements Predicate<Candidate> {
             return false;
         }
 
-        if (!"Ukrainian".equalsIgnoreCase(candidate.getNationality())) {
+        if (!NATIONALITY_UKRAINIAN
+                .equalsIgnoreCase(candidate.getNationality())) {
             return false;
         }
 
-        String[] years = candidate.getPeriodsInUkr().split("-");
-        if (years.length != 2) {
-            return false;
-        }
-        try {
-            int startYear = Integer.parseInt(years[0]);
-            int endYear = Integer.parseInt(years[1]);
-            if ((endYear - startYear) < 10) {
-                return false;
-            }
-        } catch (NumberFormatException e) {
+        if (!checkTimeLivingInCountry(candidate.getPeriodsInUkr())) {
             return false;
         }
 
         return true;
     }
-}
 
+    private boolean checkTimeLivingInCountry(String periodsInUkr) {
+        String[] years = periodsInUkr.split(PERIOD_DELIMITER);
+        if (years.length != EXPECTED_PERIOD_PARTS) {
+            return false;
+        }
+        try {
+            int startYear = Integer.parseInt(years[0]);
+            int endYear = Integer.parseInt(years[1]);
+            return (endYear - startYear) >= REQUIRED_LIVING_YEARS;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+}
